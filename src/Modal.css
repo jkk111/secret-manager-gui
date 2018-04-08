@@ -1,0 +1,42 @@
+.modal {
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  transition: all 1s;
+  z-index: 10;
+}
+
+.modal-background {
+  background: rgba(0, 0, 0, .5);
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.modal-content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 1em;
+  min-width: 10vw;
+  min-height: 10vh;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+}
+
+.modal-opened {
+  opacity: 1;
+}
+
+.modal-closed {
+  opacity: 0;
+  pointer-events: none;
+}
