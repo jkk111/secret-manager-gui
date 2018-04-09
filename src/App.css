@@ -62,6 +62,8 @@ html, body, #root {
   border: thick solid rgba(0, 0, 0, .5);
   margin: 1em;
   transition: all 1s;
+  display: flex;
+  flex-direction: column;
 }
 
 .set-secret {

@@ -1,5 +1,6 @@
 import React from 'react';
 import PasswordModal from './PasswordModal'
+import ConfirmPasswordModal from './ConfirmPasswordModal'
 import InputModal from './InputModal'
 import './App.css';
 
@@ -16,6 +17,8 @@ class App extends React.Component {
     this.add_secret = this.add_secret.bind(this);
     this.add_file = this.add_file.bind(this);
     this.file_set = this.file_set.bind(this);
+    this.change_pass = this.change_pass.bind(this);
+    this.new_password_set = this.new_password_set.bind(this);
   }
 
   componentDidMount() {
@@ -88,13 +91,15 @@ class App extends React.Component {
   }
 
   async password_set(password) {
-    let { adding_file } = this.state;
+    let { adding_file, updating_password, updated_password } = this.state;
 
     this.setState({
       password,
       prompt_password: false,
       password_valid: false,
-      adding_file: false
+      adding_file: false,
+      updating_password: false,
+      updated_password: ''
     })
     if(adding_file) {
       let body = JSON.stringify({
@@ -119,6 +124,16 @@ class App extends React.Component {
 
       this.refresh();
       this.load(this.state.file, password)
+    } else if(updating_password) {
+      let body = JSON.stringify({ password, updated: updated_password, file: this.state.selected })
+      let resp = await fetch('/change_pass', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body
+      })
+      return;
     } else {
       this.load(this.state.selected, password)
     }
@@ -138,7 +153,9 @@ class App extends React.Component {
   close_prompt() {
     this.setState({
       adding_file: false,
-      prompt_password: false
+      prompt_password: false,
+      prompt_new_password: false,
+      updating_password: false
     })
   }
 
@@ -194,8 +211,30 @@ class App extends React.Component {
     })
   }
 
+  change_pass() {
+    this.setState({
+      prompt_new_password: true
+    })
+  }
+
+  new_password_set({ password, confirm }) {
+    console.log(password, confirm)
+    if(confirm === password) {
+      this.setState({
+        updated_password: password,
+        prompt_new_password: false,
+        updating_password: true,
+        prompt_password: true
+      })
+    } else {
+      this.setState({
+        confirm_invalid: true
+      })
+    }
+  }
+
   render() {
-    let { selected, files = [], prompt_password, prompt_file, file_keys = [], password_valid } = this.state;
+    let { confirm_invalid, selected, files = [], prompt_new_password, prompt_password, prompt_file, file_keys = [], password_valid } = this.state;
 
     files = files.map((f, i) => {
       let className = 'file'
@@ -223,6 +262,7 @@ class App extends React.Component {
 
     return <div className='wrapper'>
       <InputModal open={prompt_file} close={this.close_prompt} submit={this.file_set} />
+      <ConfirmPasswordModal invalid={confirm_invalid} open={prompt_new_password} file={selected} close={this.close_prompt} submit={this.new_password_set} />
       <PasswordModal open={prompt_password} file={selected} close={this.close_prompt} submit={this.password_set} />
       <div className='app-layout'>
         <div className='file-list'>
@@ -240,7 +280,8 @@ class App extends React.Component {
         </div>
         <div className={secrets_class}>
           <h3 className='title'>Keys</h3>
-          {file_keys}
+          <div className='content-grow'>{file_keys}</div>
+          <h3 className='footer-button' onClick={this.change_pass}>Change Password</h3>
         </div>
       </div>
     </div>

@@ -13,8 +13,8 @@ let PasswordModal = ({ file = null, submit, close, open = false }) => {
   return <Modal className='password' close={close} open={open}>
     <div>
       <div className='password-prompt'>Please Enter Password For Store: "{file}"</div>
-      <form onSubmit={form_submit(submit)}>
-        <input className='password-input' type='password' name='password' />
+      <form onSubmit={form_submit(submit)} autoComplete='off'>
+        <input autoFocus autoComplete='off' className='password-input' type='password' name='password' />
         <button className='password-submit'>Submit</button>
       </form>
     </div>
