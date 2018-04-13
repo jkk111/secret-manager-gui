@@ -1,5 +1,5 @@
 {
-  "name": "secret-manager",
+  "name": "@jkk111/secret-manager-gui",
   "version": "0.1.0",
   "private": true,
   "proxy": "http://localhost:8081/",
